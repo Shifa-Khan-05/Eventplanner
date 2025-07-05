@@ -2,44 +2,43 @@ import React, { useState } from "react";
 import image from "../pages/image/pic6.jpg";
 
 const Register = () => {
+  const [fname, setfname] = useState();
+  const [email, setlemail] = useState();
+  const [city, setcity] = useState();
+  const [gender, setgender] = useState();
+  const [phn, setphn] = useState();
 
-  const [fname,setfname]= useState();
-  const[lname,setlname]=useState();
-  const [password,setpassword]=useState();
-  const [city,setcity]=useState();
-  const [gender,setgender]=useState();
-  const [address,setaddress]=useState();
+  const [Regiserdata, setRegisterdata] = useState({
+    fname: "",
+    email: "",
+    password: "",
+    phn: "",
+  });
+
+  const handelchange = (e) => {
+    const { name, value } = e.target;
+    setRegisterdata((previousdata) => ({ ...previousdata, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(Regiserdata);
+
+    setRegisterdata({
+      fname: "",
+      password: "",
+      city: "",
+      phn: "",
+    });
+  };
+//    const handleGenderChange = (selectedGender) => {
+//     setRegisterdata((prevData) => ({...prevData,
+//     gender: selectedGender,
+//   }));
+// };
 
 
 
-  const [Regiserdata, setRegisterdata]=useState({
-        fname:"",
-        lname:"",
-        password:"",
-        city:"",
-        gender:"",
-        address:""
-      })
-
-      const handelchange=(e)=>{
-      const{name,value}=e.target;
-      setRegisterdata((previousdata)=>({...previousdata,[name]:value})) 
-    }
-
-    const handleSubmit=(e)=>
-    {
-      e.preventDefault();
-      console.log(Regiserdata);
-
-      setRegisterdata({
-        fname:"",
-        lname:"",
-        password:"",
-        city:"",
-        gender:"",
-        address:""
-      })
-    }
 
   return (
     <>
@@ -52,7 +51,7 @@ const Register = () => {
                 {" "}
                 <u>Register Now </u>
               </div>
-              
+
               <label
                 className=" text-2xl ml-10 mt-5 absolute text-amber-50"
                 htmlFor=""
@@ -63,73 +62,94 @@ const Register = () => {
                 type=" text"
                 name="fname"
                 className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-15"
-                id=""
-                placeholder="Enter Your First name"
+                id="1"
+                placeholder="Enter Your Full name"
                 value={Regiserdata.fname}
                 onChange={handelchange}
               />
               <label className=" text-2xl ml-10 mt-10 text-amber-50" htmlFor="">
-                Last name
+                Email
               </label>
               <input
-                type="text"
-                name="lname"
+                type="email"
+                name="email"
                 className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                id=""
-                placeholder="Enter your Last Name"
-                 value={Regiserdata.lname}
-                 onChange={handelchange}
+                id="2"
+                placeholder="Enter your email"
+                value={Regiserdata.email}
+                onChange={handelchange}
               />
-              
+
               <div className=" ">
-                  <label className=" text-2xl ml-10 mt-10 text-amber-50" htmlFor="">
-               City
-              </label>
-              <input
-                type="text"
-                name="city"
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                id=""
-                placeholder="Enter your city"
-                 value={Regiserdata.city}
-                 onChange={handelchange}
-              />
-                
-              </div>
-
-
-              <div className=" text-amber-50 text-xl ml-10 mt-5 ">
-                <label htmlFor="Gender " name="Gender" value={Regiserdata.gender} onChange={handelchange}>Gender : </label>
-                <label htmlFor="Gender">Male</label>
-                <input type="radio"  />
-                <label className="ml-8" htmlFor="Gender">
-                  Female
+                <label
+                  className=" text-2xl ml-10 mt-10 text-amber-50"
+                  htmlFor=""
+                >
+                  Password
                 </label>
-                <input type="radio" />
+                <input
+                  type="password"
+                  name="password"
+                  className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
+                  id="3"
+                  placeholder="******"
+                  value={Regiserdata.password}
+                  onChange={handelchange}
+                />
               </div>
 
-
-              
               
               <div className=" mt-5 ml-10">
-                <label className=" text-xl text-amber-50" htmlFor="address">Address</label>
-                <input name="address" value={Regiserdata.address} onChange={handelchange} className="bg-amber-50 text-gray-600 w-60 h-10 ml-2 rounded-sm " id=""/>
+                <label className=" text-xl text-amber-50" htmlFor="address">
+                  Phone
+                </label>
+                <br />
+                <input
+                type="tel"
+                  name="phn"
+                  value={Regiserdata.phn}
+                  onChange={handelchange}
+                  className="bg-amber-50 text-gray-600 w-80 p-3 rounded-sm mt-2 "
+                  id="4"
+                  placeholder="+91-12345678"
+                />
               </div>
+              {/* <div className=" text-amber-50 text-xl ml-10 mt-5 ">
+                <label
+                  htmlFor="Gender "
+                  name="Gender"
+                  value={Regiserdata.gender}
+                  onChange={handelchange}
+                >
+                  Gender :{" "}
+                </label>
+                <label name="gender" htmlFor="Gender">Male</label>
+                <input type="radio" name="gender" value="Male" 
+                 onChange={(e) => handleGenderChange(e.target.value)} />
+                <label className="ml-8" htmlFor="Gender" name="gender">
+                  Female
+                </label>
+                <input type="radio" name="gender" value="FeMale"  
+                 onChange={(e) => handleGenderChange(e.target.value)}/>
+              </div> */}
 
 
-              <button className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-2 hover:bg-amber-200 hover:text-black" type="submit">
-               Submit
+              <button
+                className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-5 hover:bg-amber-200 hover:text-black"
+                type="submit"
+              >
+                Submit
               </button>
-               <div className=" text-amber-50 text-md mt-3 ml-22">
-                 <span>Already have an account? </span>
-                 <a className=" hover:text-blue-700" href="/Btn1">Login </a>
-                 
+              <div className=" text-amber-50 text-md mt-3 ml-22">
+                <span>Already have an account? </span>
+                <a className=" hover:text-blue-700" href="/Btn1">
+                  Login{" "}
+                </a>
               </div>
             </form>
           </div>
         </div>
       </div>
-      
     </>
   );
 };

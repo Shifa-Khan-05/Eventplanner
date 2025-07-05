@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 const userSchema =mongoose.Schema({
-    name:{
+    fname:{
         type:String,
         required:true,
     },
@@ -12,6 +12,10 @@ const userSchema =mongoose.Schema({
         unique:true
     },
      password:{
+        type:String,
+        required:true,
+    },
+     phn:{
         type:String,
         required:true,
     },

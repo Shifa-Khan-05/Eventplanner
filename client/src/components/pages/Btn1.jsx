@@ -3,14 +3,14 @@ import image from "../pages/image/pic6.jpg";
 
 const Btn1 = () => {
 
-  const [email, setemail] = useState();
+  const [emaill, setemaill] = useState();
     const [password, setpassword] = useState();
 
    
 
     const [Regiserdata, setRegisterdata]=useState({
       name:"",
-      email:"",
+      emaill:"",
       password:""
     })
     
@@ -28,7 +28,7 @@ const Btn1 = () => {
 
       setRegisterdata({
       name:"",
-      email:"",
+      emaill:"",
       password:""
       })
     }
@@ -59,7 +59,7 @@ const Btn1 = () => {
 
               <input
                 type="email"
-                name="email"
+                name="emaill"
                 value={Regiserdata.email}
                 onChange={handelchange}
                 className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
