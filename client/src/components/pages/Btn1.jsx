@@ -1,34 +1,54 @@
 import React, { useState } from "react";
 import image from "../pages/image/pic6.jpg";
+import api from "../../config/api";
+import {toast} from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 
 const Btn1 = () => {
-
-  const [emaill, setemaill] = useState();
+   const navigate =useNavigate()
+  const [email, setemaill] = useState();
     const [password, setpassword] = useState();
 
    
 
-    const [Regiserdata, setRegisterdata]=useState({
-      name:"",
-      emaill:"",
+    const [Logindata, setLogindata]=useState({
+      
+      email:"",
       password:""
     })
     
     const handelchange=(e)=>{
       const{name,value}=e.target;
-      setRegisterdata((previousdata)=>({...previousdata,[name]:value}))
+      setLogindata((previousdata)=>({...previousdata,[name]:value}))
       
       
     }
    
-    const handleSubmit=(e)=>
+    const handleSubmit= async (e)=>
     {
       e.preventDefault();
-      console.log(Regiserdata);
+      console.log(Logindata);
 
-      setRegisterdata({
-      name:"",
-      emaill:"",
+      try {
+        const res= await api.post("/auth/login",Logindata);
+        toast.success(res.data.message);
+         email:"";
+      password:"";
+      navigate("/UserDashboard");
+
+      } catch (error) {
+        toast.error()
+      } 
+
+  `Error : ${error.response?.status || error.message} | ${
+          error.response?.data.message || ""
+        }`
+
+
+      setLogindata({
+    
+      email:"",
       password:""
       })
     }
@@ -45,22 +65,13 @@ const Btn1 = () => {
                 <u>Login </u>
               </div>
                    
-               <input
-                type="text"
-                name="name"
-                value={Regiserdata.name}
-                onChange={handelchange}
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-10"
-                id="id1"
-                placeholder="Enter Your Full name"
-                required
-              />
+               
                    
 
               <input
                 type="email"
-                name="emaill"
-                value={Regiserdata.email}
+                name="email"
+                value={Logindata.email}
                 onChange={handelchange}
                 className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
                 id="id2"
@@ -70,7 +81,7 @@ const Btn1 = () => {
               <input
                 type="text"
                 name="password"
-                value={Regiserdata.password}
+                value={Logindata.password}
                 onChange={handelchange}
                 className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
                 id="id3"

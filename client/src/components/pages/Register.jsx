@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import image from "../pages/image/pic6.jpg";
-
+import api from "../../config/api";
+import {toast} from "react-hot-toast";
 const Register = () => {
   const [fname, setfname] = useState();
   const [email, setlemail] = useState();
@@ -20,16 +21,28 @@ const Register = () => {
     setRegisterdata((previousdata) => ({ ...previousdata, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(Regiserdata);
-
-    setRegisterdata({
+     
+    try {
+      const res=await api.post("/auth/register",Regiserdata);
+      toast.success(res.data.message);
+      setRegisterdata({
       fname: "",
       password: "",
       city: "",
       phn: "",
     });
+      
+    } catch (error) {
+      toast.error(  `Error : ${error.response?.status || error.message} | ${
+          error.response?.data.message || ""
+        }`)
+    }
+
+
+    
   };
 //    const handleGenderChange = (selectedGender) => {
 //     setRegisterdata((prevData) => ({...prevData,

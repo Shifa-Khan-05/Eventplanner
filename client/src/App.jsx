@@ -10,6 +10,9 @@ import Btn1 from './components/pages/Btn1';
 import Register from './components/pages/Register';
 import Contact from './components/pages/Contact';
 import Bottom from './components/Bottom ';
+import {Toaster} from "react-hot-toast";
+import UserDashboard from './components/pages/userDashboard';
+
 
 
 
@@ -17,7 +20,7 @@ const App = () => {
   return (
    <>
    <BrowserRouter>
-     
+      <Toaster/>
       <Navbar/>
      
     
@@ -35,6 +38,8 @@ const App = () => {
        <Route path="/Register" element={<Register/>} />
         <Route path="/Contact" element={<Contact/>} />
         <Route path="/stories" element={<Stories/>} />
+         <Route path="/UserDashboard" element={<UserDashboard/>} />
+
      </Routes>
        
         <Bottom/>
