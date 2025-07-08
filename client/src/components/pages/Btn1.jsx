@@ -39,11 +39,12 @@ const Btn1 = () => {
 
       } catch (error) {
         toast.error()
-      } 
-
-  `Error : ${error.response?.status || error.message} | ${
+        `Error : ${error.response?.status || error.message} | ${
           error.response?.data.message || ""
         }`
+      } 
+
+  
 
 
       setLogindata({
