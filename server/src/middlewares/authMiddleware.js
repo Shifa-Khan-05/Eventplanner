@@ -24,8 +24,7 @@ export const Protect = async(req, res ,next) =>{
     error.statusCode = 401;
       return next(error);
  }
-
-
+ 
  req.user = verifiedUser;
  next();
  }

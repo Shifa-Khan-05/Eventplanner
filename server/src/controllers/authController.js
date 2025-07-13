@@ -1,6 +1,8 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import genToken from "../utils/auth.js";
+import Deactivation from "../models/deactivationModel.js";
+
 
 export const RegisterUser = async (req, res, next) => {
   try {
@@ -18,12 +20,13 @@ export const RegisterUser = async (req, res, next) => {
     }
 
     const hashedpassword = await bcrypt.hash(password, 10);
-
-    const newuser = await User.create({
+    const profilePic=`https://placehold.co/600x400?text=${fname.charAt(0).toUpperCase()}`
+    const newUser = await User.create({
       fname,
       email,
       password: hashedpassword,
       phn,
+      photo:profilePic,
     });
     res.status(201).json({ message: "Registration successfull" });
   } catch (error) {

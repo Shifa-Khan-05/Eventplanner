@@ -12,8 +12,9 @@ import Contact from './components/pages/Contact';
 import Bottom from './components/Bottom ';
 import {Toaster} from "react-hot-toast";
 import UserDashboard from './components/pages/userDashboard';
-
-
+import UserDashboardEdit from './components/pages/userDashboardEdit';
+//import CustomerDashboard from './components/pages/CustomerDashboard';
+import CustomerDashboard from './components/pages/CustomerDashboard';
 
 
 const App = () => {
@@ -38,7 +39,10 @@ const App = () => {
        <Route path="/Register" element={<Register/>} />
         <Route path="/Contact" element={<Contact/>} />
         <Route path="/stories" element={<Stories/>} />
-         <Route path="/UserDashboard" element={<UserDashboard/>} />
+         
+                  <Route path="/CustomerDashboard" element={<CustomerDashboard/>} />
+
+           
 
      </Routes>
        

@@ -35,7 +35,7 @@ const Btn1 = () => {
         toast.success(res.data.message);
          email:"";
       password:"";
-      navigate("/UserDashboard");
+      navigate("/CustomerDashboard");
 
       } catch (error) {
         toast.error()
@@ -89,8 +89,9 @@ const Btn1 = () => {
                 placeholder="Enter Your password"
                 required
               />
-              <button className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-10 hover:bg-amber-200 hover:text-black" type="submit">
-                Login
+              <button className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-10 hover:bg-amber-200 hover:text-black" type="submit"
+              >
+                Login 
               </button>
               <div className=" text-amber-50 text-md mt-3 ml-22">
                  <span>Don't have an account? </span>
