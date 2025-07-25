@@ -44,7 +44,7 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
     fname: "",
     email: "",
     phn: "",
-     photo: "",
+    picture: "",
     gender: "",
     occupation: "",
     address: "",
@@ -76,7 +76,7 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
     const formData = new FormData();
 
     formData.append("fname", userdata.fname);
-    formData.append("picture", picture);
+   picture && formData.append("picture", picture);
      formData.append("gender", userdata.gender);
     formData.append("occupation", userdata.occupation);
     formData.append("address", userdata.address);
@@ -129,7 +129,7 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
             <div className="relative w-50 h-50">
               <div className="w-50 h-50 rounded-full ">
                 <img
-                 src={preview || userdata.photo || "/default-avatar.png"}
+                 src={preview || userdata.photo}
                   alt=""
                   className="w-50 h-50 rounded-full object-cover"
                 />

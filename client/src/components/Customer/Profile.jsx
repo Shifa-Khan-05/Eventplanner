@@ -8,6 +8,7 @@ import AccountDeactivateModal from "./AccountDeactivateModal";
 
 
 
+
 const Profile = () => {
  const [userdata, setUserData] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -31,6 +32,8 @@ const Profile = () => {
     fetchUserData();
   }, [isEditModalOpen]);
 
+  //console.log(userdata);
+  
   return (
     <>
      <div className="flex justify-between bg-gradient-to-r from-orange-200 to-red-200 p-4 shadow-lg">
@@ -48,14 +51,14 @@ const Profile = () => {
         <div className="flex flex-col gap-6 border border-red-200 w-2/7 rounded-xl bg-white shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
           <div className="border-4 border-orange-200 w-48 h-48 rounded-full overflow-hidden m-auto shadow-md">
             <img
-              src={userdata.photo || null}
+              src={userdata.photo }
               alt="profilePic"
               className="w-full h-full object-cover rounded-full"
             />
           </div>
           <div className="text-gray-700">
             <b className="text-orange-600">Name:</b>{" "}
-            <span className="text-gray-800 ml-2">{userdata.fullName}</span>
+            <span className="text-gray-800 ml-2">{userdata.fname}</span>
           </div>
           <div className="text-gray-700">
             <b className="text-orange-600">Email:</b>{" "}
@@ -63,7 +66,7 @@ const Profile = () => {
           </div>
           <div className="text-gray-700">
             <b className="text-orange-600">Phone:</b>{" "}
-            <span className="text-gray-800 ml-2">{userdata.phone}</span>
+            <span className="text-gray-800 ml-2">{userdata.phn}</span>
           </div>
         </div>
 

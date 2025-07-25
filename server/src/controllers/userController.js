@@ -1,3 +1,5 @@
+import cloudinary from "../config/cloudinary.js";
+import User from "../models/userModel.js";
 
 
 export const Getprofile = async (req, res, next) => {

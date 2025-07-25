@@ -15,6 +15,8 @@ const Navbar = () => {
         <Link to={"/Services"}>Services</Link>
         <Link to={"/Stories"}>Stories</Link>
          <Link to={"/Elements"}>Elements</Link>
+          <Link to={"/Btn1"} >Login</Link>
+          
 
 
 
