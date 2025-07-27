@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { IoIosCloseCircle, IoIosSave } from "react-icons/io";
 import { FaCamera } from "react-icons/fa";
-import api from "../../config/api";
+import api from "../../../config/api";
 import {toast} from "react-hot-toast";
 
 

@@ -3,36 +3,19 @@ import { toast } from "react-hot-toast";
 import api from "../../config/api";
 import { FaUserEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import ProfileEditModal from "./ProfileEditModal";
-import AccountDeactivateModal from "./AccountDeactivateModal";
+import ProfileEditModal from "./modals/ProfileEditModal.jsx";
+import AccountDeactivateModal from "./modals/AccountDeactivateModal.jsx";
+import { useAuth} from "../../context/AuthContext.jsx"
 
 
 
 
 const Profile = () => {
+  const { user } =useAuth();
  const [userdata, setUserData] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
 
-
-  const fetchUserData = async () => {
-    try {
-      const res = await api.get("/user/profile");
-      setUserData(res.data.data);
-    } catch (error) {
-      toast.error(
-        `Error : ${error.response?.status || error.message} | ${
-          error.response?.data.message || ""
-        }`
-      );
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [isEditModalOpen]);
-
-  //console.log(userdata);
   
   return (
     <>

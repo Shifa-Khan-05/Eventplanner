@@ -1,107 +1,99 @@
 import React, { useState } from "react";
 import image from "../pages/image/pic6.jpg";
 import api from "../../config/api";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../context/AuthContext";
 
 const Btn1 = () => {
-   const navigate =useNavigate()
-  const [email, setemaill] = useState();
-    const [password, setpassword] = useState();
+  const navigate = useNavigate();
+  const { user, setUser, isLogin, setisLogin, isAdmin, setIsAdmin } = useAuth();
 
-   
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [Logindata, setLogindata]=useState({
-      
-      email:"",
-      password:""
-    })
-    
-    const handelchange=(e)=>{
-      const{name,value}=e.target;
-      setLogindata((previousdata)=>({...previousdata,[name]:value}))
-      
-      
-    }
-   
-    const handleSubmit= async (e)=>
-    {
-      e.preventDefault();
-      console.log(Logindata);
+  const formSubmitKro = async (e) => {
+    e.preventDefault();
 
-      try {
-        const res= await api.post("/auth/login",Logindata);
-        toast.success(res.data.message);
-         email:"";
-      password:"";
-      navigate("/CustomerDashboard");
+    const logindata = {
+      email,
+      password,
+    };
 
-      } catch (error) {
-        toast.error()
-        `Error : ${error.response?.status || error.message} | ${
+    try {
+      const res = await api.post("/auth/login", logindata);
+      toast.success(res.data.message);
+      setPassword("");
+      setEmail("");
+      setUser(res.data.data);
+      sessionStorage.setItem("EventUser", JSON.stringify(res.data.data));
+      setisLogin(true); 
+      if (res.data.data.role === "Admin") {
+        setIsAdmin(true);
+        navigate("/adminpanel");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      toast.error(
+        `Error: ${error.response?.status || error.message} | ${
           error.response?.data.message || ""
         }`
-      } 
-
-  
-
-
-      setLogindata({
-    
-      email:"",
-      password:""
-      })
+      );
+      console.log(error);
     }
+  };
 
-   return (
+  return (
+    
     <>
-      <div className="w-full h-screen -mt-30 bg-amber-300 relative">
-        <div>
-          <img className="w-700 h-194 blur" src={image} alt="" />
-          <div className="w-100 h-110 bg-red-300 -mt-140 ml-140  rounded-2xl absolute">
-            <form action="" onSubmit={handleSubmit} >
-              <div className=" text-4xl text-amber-50 mt-5 ml-38">
-                {" "}
-                <u>Login </u>
-              </div>
-                   
-               
-                   
 
-              <input
-                type="email"
-                name="email"
-                value={Logindata.email}
-                onChange={handelchange}
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                id="id2"
-                placeholder="Enter Your email"
-                required
-              />
-              <input
-                type="text"
-                name="password"
-                value={Logindata.password}
-                onChange={handelchange}
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                id="id3"
-                placeholder="Enter Your password"
-                required
-              />
-              <button className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-10 hover:bg-amber-200 hover:text-black" type="submit"
-              >
-                Login 
-              </button>
-              <div className=" text-amber-50 text-md mt-3 ml-22">
-                 <span>Don't have an account? </span>
-                 <a className=" hover:text-blue-700" href="/Register">Register </a>
-                 
-              </div>
-            </form>
+    <div className="w-full h-screen bg-amber-300 relative">
+      <img
+        className="w-full h-96 object-cover blur-sm"
+        src={image}
+        alt="Background"
+      />
+      <div className="w-[400px] bg-red-300 p-6 rounded-2xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <form onSubmit={formSubmitKro}>
+          <h2 className="text-4xl text-white mb-5 text-center underline">Login</h2>
+
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="bg-amber-50 w-full p-3 rounded-sm mb-4"
+            placeholder="Enter Your Email"
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-amber-50 w-full p-3 rounded-sm mb-4"
+            placeholder="Enter Your Password"
+            required
+          />
+
+          <button
+            className="bg-amber-50 w-full py-3 rounded-sm text-gray-700 hover:bg-amber-200 hover:text-black transition"
+            type="submit"
+          >
+            Login
+          </button>
+
+          <div className="text-white text-md mt-4 text-center">
+            <span>Don't have an account? </span>
+            <a className="hover:text-blue-700 underline" href="/Register">
+              Register
+            </a>
           </div>
-        </div>
+        </form>
       </div>
+    </div>
     </>
   );
 };

@@ -26,7 +26,7 @@ const Register = () => {
     console.log(Regiserdata);
      
     try {
-      const res=await api.post("/auth/register",Regiserdata);
+      const res=await api.post("/auth/",Regiserdata);
       toast.success(res.data.message);
       setRegisterdata({
       fname: "",
