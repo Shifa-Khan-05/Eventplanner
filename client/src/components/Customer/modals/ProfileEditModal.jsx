@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { IoIosCloseCircle, IoIosSave } from "react-icons/io";
 import { FaCamera } from "react-icons/fa";
 import api from "../../../config/api";
-import {toast} from "react-hot-toast";
-
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../../context/AuthContext";
 
 const indianStates = [
   "Andhra Pradesh",
@@ -37,9 +36,8 @@ const indianStates = [
   "West Bengal",
 ];
 
-
-
 const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
+  const { setUser } = useAuth();
   const [userdata, setUserData] = useState({
     fname: "",
     email: "",
@@ -52,11 +50,10 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
     state: "",
     district: "",
     representing: "",
-    
   });
 
   const [preview, setPreview] = useState("");
-  const [picture, setPicture] = useState("");
+  const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handelChange = (e) => {
@@ -65,19 +62,24 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
   };
 
   const handleImageChange = (e) => {
-    setPreview(URL.createObjectURL(e.target.files[0]));
-    setPicture(e.target.files[0]);
+    const file = e.target.files[0];
+    if (!file) return;
+    // revoke previous preview if any
+    if (preview) URL.revokeObjectURL(preview);
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+    setPicture(file);
   };
 
   const handleEditProfile = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
 
     const formData = new FormData();
-
     formData.append("fname", userdata.fname);
-   picture && formData.append("picture", picture);
-     formData.append("gender", userdata.gender);
+    picture && formData.append("picture", picture);
+    formData.append("gender", userdata.gender);
     formData.append("occupation", userdata.occupation);
     formData.append("address", userdata.address);
     formData.append("city", userdata.city);
@@ -85,21 +87,26 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
     formData.append("district", userdata.district);
     formData.append("representing", userdata.representing);
 
-
     try {
-      
+      // debug: uncomment if needed
+      // for (let [k, v] of formData.entries()) console.log(k, v);
+
       const res = await api.put("/user/update", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       toast.success(res.data.message);
+
+      // Assume res.data.data has the updated user including picture URL
       setUserData(res.data.data);
+      setUser(res.data.data); // sync auth context
+      setPreview(""); // clear temporary preview
       onClose();
     } catch (error) {
       toast.error(
         `Error : ${error.response?.status || error.message} | ${
-          error.response?.data.message || ""
+          error.response?.data?.message || ""
         }`
       );
     } finally {
@@ -107,17 +114,30 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
     }
   };
 
+  // cleanup preview URL on unmount/change
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
   useEffect(() => {
     if (oldData) {
-      setUserData(oldData);
+      // normalize incoming data: if backend returns `photo` rename to `picture`
+      const normalized = {
+        ...oldData,
+        picture: oldData.picture || oldData.photo || "",
+      };
+      setUserData(normalized);
     }
   }, [isOpen, oldData]);
 
   if (!isOpen) return null;
+
   return (
     <>
       <div className="inset-0 fixed bg-black/70 flex justify-center items-center">
-        <div className={`border w-1/2 max-h-7/10 mt-10 bg-white rounded-lg overflow-y-auto`}>
+        <div className="border w-1/2 max-h-7/10 mt-10 bg-white rounded-lg overflow-y-auto">
           <div className="text-xl flex justify-between p-3 border-b-2 sticky top-0 bg-white z-10">
             <h1 className="font-bold">Edit Profile</h1>
             <button onClick={onClose}>
@@ -125,12 +145,17 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-3 p-4">
+          <form onSubmit={handleEditProfile} className="flex flex-col gap-3 p-4">
             <div className="relative w-50 h-50">
               <div className="w-50 h-50 rounded-full ">
                 <img
-                 src={preview || userdata.photo}
-                  alt=""
+                  src={
+                    preview ||
+                    (userdata.photo
+                      ? `${userdata.photo}?t=${Date.now()}`
+                      : "/fallback.jpg")
+                  }
+                  alt="profile"
                   className="w-50 h-50 rounded-full object-cover"
                 />
               </div>
@@ -140,14 +165,16 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 </label>
                 <input
                   type="file"
-                  name="photo"
+                  name="picture"
                   className="hidden"
                   id="imageUpload"
+                  accept="image/*"
                   onChange={handleImageChange}
                 />
               </div>
             </div>
-            <div className="grid gap-3 p-5  w-full grid-cols-[30%_70%] justify-items-center items-center">
+
+            <div className="grid gap-3 p-5 w-full grid-cols-[30%_70%] justify-items-center items-center">
               <span className="font-bold text-md">Email : </span>
               <input
                 type="text"
@@ -175,7 +202,6 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 className="p-2 border rounded-lg border-rose-300 w-full"
               />
               <span className="font-bold text-md">Gender : </span>
-              
               <select
                 name="gender"
                 value={userdata.gender}
@@ -186,11 +212,9 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
-
               </select>
 
-
-               <span className="font-bold text-md">Occupation : </span>
+              <span className="font-bold text-md">Occupation : </span>
               <input
                 type="text"
                 name="occupation"
@@ -198,7 +222,7 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 onChange={handelChange}
                 className="p-2 border rounded-lg border-rose-300 w-full"
               />
-               <span className="font-bold text-md">Address : </span>
+              <span className="font-bold text-md">Address : </span>
               <input
                 type="text"
                 name="address"
@@ -207,7 +231,7 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 className="p-2 border rounded-lg border-rose-300 w-full"
               />
 
-                 <span className="font-bold text-md">City : </span>
+              <span className="font-bold text-md">City : </span>
               <input
                 type="text"
                 name="city"
@@ -215,7 +239,6 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 onChange={handelChange}
                 className="p-2 border rounded-lg border-rose-300 w-full"
               />
-
 
               <span className="font-bold text-md">District : </span>
               <input
@@ -226,22 +249,23 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 className="p-2 border rounded-lg border-rose-300 w-full"
               />
               <span className="font-bold text-md">State : </span>
-              <select 
+              <select
                 name="state"
                 value={userdata.state}
                 onChange={handelChange}
                 className="p-2 border rounded-lg border-rose-300 w-full"
-              > 
-                 <option value="N/A">N/A</option>
-                {indianStates ? (indianStates.map(
-                  (rajya,i)=><option value={rajya} key={i}>{rajya}</option>
-                )
-                  
+              >
+                <option value="N/A">N/A</option>
+                {indianStates ? (
+                  indianStates.map((rajya, i) => (
+                    <option value={rajya} key={i}>
+                      {rajya}
+                    </option>
+                  ))
                 ) : (
                   <option value={""}>No states available</option>
                 )}
-                </select>
-
+              </select>
 
               <span className="font-bold text-md">Representing : </span>
               <select
@@ -258,13 +282,14 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
             </div>
 
             <button
-              className="border p-2 rounded-lg flex gap-2 justify-center items-center bg-rose-300 hover:bg-rose-400 text-lg"
-              onClick={handleEditProfile}
+              type="submit"
+              disabled={loading}
+              className="border p-2 rounded-lg flex gap-2 justify-center items-center bg-rose-300 hover:bg-rose-400 text-lg disabled:opacity-50"
             >
               <IoIosSave />
               {loading ? "Saving Data . . . " : "Save Data"}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </>

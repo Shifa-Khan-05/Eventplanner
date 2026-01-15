@@ -11,10 +11,15 @@ import { useAuth} from "../../context/AuthContext.jsx"
 
 
 const Profile = () => {
-  const { user } =useAuth();
- const [userdata, setUserData] = useState("");
+  const {user } =useAuth();
+ const [userdata, setUserData] = useState(user);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+
+
+  useEffect(() => {
+  setUserData(user);
+}, [user]);
 
   
   return (

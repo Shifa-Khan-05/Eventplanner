@@ -21,15 +21,14 @@ const userSchema =mongoose.Schema({
     },
      photo:{
         type:String,
-      //  required:true,
+       required:true,
         default:"",
     },
     gender:{
         type:String,
         default:"N/A",
         enum:["male","female","both","N/A"],
-        required:"true",
-        
+        required:true,
     },
      representing: {
       type: String,
@@ -39,7 +38,7 @@ const userSchema =mongoose.Schema({
     },
     occupation: {
       type: String,
-      default: " N/A",
+      default: "N/A",
       required: true,
     },
     address: {
@@ -60,6 +59,18 @@ const userSchema =mongoose.Schema({
     state: {
       type: String,
       default: "N/A",
+      required: true,
+    },
+    status:{
+      type:String,
+      enum:["Active","Inactive"],
+      default: "Active",
+      required: true,
+    },
+    role:{
+      type:String,
+      enum:["Admin","User","N/A"],
+      default: "User",
       required: true,
     },
   },

@@ -6,7 +6,7 @@ import { TiSocialTwitterCircular } from "react-icons/ti";
 import { FaInstagram } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
 
-const Bottom = () => {
+const Footer = () => {
   return (
     <>
       <div className=" w-full h-130 mt-20 bg-black">
@@ -76,4 +76,4 @@ const Bottom = () => {
   );
 };
 
-export default Bottom;
+export default Footer;

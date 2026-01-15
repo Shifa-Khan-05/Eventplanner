@@ -18,11 +18,20 @@ export const Getprofile = async (req, res, next) => {
   }
 };
 
-export const UpdateProfile =async (req,res,next)=>
-{
+export const UpdateProfile = async (req, res, next) => {
   try {
-    const currentuser=req.user;
-    const {fname, phn,gender,occupation, address, city, state, representing}=req.body;
+    const currentuser = req.user;
+    const {
+      fname,
+      phn,
+      gender,
+      occupation,
+      address,
+      city,
+      state,
+      district,
+      representing,
+    } = req.body;
 
     if (!currentuser) {
       const error = new Error("User Not Found !! Login Again");
@@ -30,10 +39,10 @@ export const UpdateProfile =async (req,res,next)=>
       return next(error);
     }
 
-    const photo =req.file;
+    const photo = req.file;
     let picture;
-    
-     if (photo) {
+
+    if (photo) {
       const b64 = Buffer.from(photo.buffer).toString("base64");
       const dataURI = `data:${photo.mimetype};base64,${b64}`;
 
@@ -51,16 +60,29 @@ export const UpdateProfile =async (req,res,next)=>
       {
         fname,
         phn,
-        photo: picture || currentuser.photo
+        gender,
+        occupation,
+        address,
+        city,
+        state,
+        district,
+        representing,
+        photo: picture || currentuser.photo,
       },
       { new: true }
     );
 
-    res.status(200).json({ message: "Profile Updated", data:updatedUser });
-
-  
+    res.status(200).json({ message: "Profile Updated", data: updatedUser });
+  } catch (error) {
+    next(error);
   }
-   catch (error) {
-    next(error)
+};
+
+export const GetAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({ message: "All Users Fetched", data: users });
+  } catch (error) {
+    next(error);
   }
 };

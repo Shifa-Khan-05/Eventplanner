@@ -8,45 +8,41 @@ export const RegisterUser = async (req, res, next) => {
   try {
     const { fname, email, password, phn } = req.body;
     if (!fname || !email || !password || !phn) {
-      const error = new Error("all Feilds Required");
+      const error = new Error("All Fields Required");
       error.statusCode = 400;
       return next(error);
     }
-    const exitUser = await User.findOne({ email });
-    if (exitUser) {
-      const error = new Error("Email Already Exist");
-      error.statusCode = 409;
-      return next(error);
-    }
 
-
-   const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
+    
+    // If user exists and is Active, throw error
     if (existingUser && existingUser.status === "Active") {
-      const error = new Error("Email Already Registerd");
+      const error = new Error("Email Already Registered");
       error.statusCode = 409;
       return next(error);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const profilePic = `https://placehold.co/600x400?text=${fname.charAt(0).toUpperCase()}`;
 
-    const profilePic = `https://placehold.co/600x400?text=${fname
-      .charAt(0)
-      .toUpperCase()}`;
-
+    // If user exists but is Inactive, reactivate them
     if (existingUser && existingUser.status === "Inactive") {
       existingUser.fname = fname;
       existingUser.password = hashedPassword;
+      existingUser.phn = phn; // Also update phone
       existingUser.status = "Active";
       existingUser.picture = profilePic;
-      existingUser.role = "User"
+      existingUser.role = "User";
       await existingUser.save();
     } else {
-      const newUser = await User.create({
+      // Create new user
+      await User.create({
         fname,
         email,
         phn,
         password: hashedPassword,
-        picture: profilePic,
+        photo: profilePic,
+        role: "User" // Explicitly set role
       });
     }
 
@@ -95,63 +91,7 @@ export const LogoutUser = (req, res,next) => {
   }
 
 };
-export const UpdateUser = async(req, res, next) => {
- try {
-    const currentUser = req.user;
-    const {
-      fname,
-      phn,
-      gender,
-      occupation,
-      address,
-      city,
-      state,
-      district,
-      representing,
-    } = req.body;
 
-    if (!currentUser) {
-      const error = new Error("User Not Found !! Login Again");
-      error.statusCode = 401;
-      return next(error);
-    }
-    const photo = req.file;
-    let picture;
-    if (photo) {
-      const b64 = Buffer.from(photo.buffer).toString("base64");
-      const dataURI = `data:${photo.mimetype};base64,${b64}`;
-
-      const result = await cloudinary.uploader.upload(dataURI, {
-        folder: "eventPlannerPictures",
-        width: 500,
-        height: 500,
-        crop: "fill",
-      });
-      picture = result.secure_url;
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      currentUser._id,
-      {
-        fname,
-        phn,
-        gender,
-        occupation,
-        address,
-        city,
-        state,
-        district,
-        representing,
-        photo: picture || currentUser.picture,
-      },
-      { new: true }
-    );
-
-    res.status(200).json({ message: "Profile Updated", data: updatedUser });
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const deleteUser = async (req, res, next) => {
   try {

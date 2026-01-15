@@ -1,4 +1,3 @@
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -14,9 +13,9 @@ const seedAdmin = async () => {
     fname: "Admin User",
     email: "admin@mywebsite.com",
     password: adminPassword,
-    phn: "9431897901",
+    phn: "N/A",
     photo: "https://placehold.co/600x400?text=A",
-    gender: "Male",
+    gender: "N/A",
     representing: "N/A",
     occupation: "N/A",
     address: "N/A",

@@ -1,1 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", sans-serif;
+  --color-primary: #ffd700; /* Gold */
+  --color-secondary: #e91e63; /* Pink */
+}
+
+body {
+  font-family: "Outfit", sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
+/* Utilities for staggered animations can be handled via style={{ animationDelay: ... }} in React */

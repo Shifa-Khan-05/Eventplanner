@@ -1,169 +1,190 @@
 import React, { useState } from "react";
 import image from "../pages/image/pic6.jpg";
 import api from "../../config/api";
-import {toast} from "react-hot-toast";
-const Register = () => {
-  const [fname, setfname] = useState();
-  const [email, setlemail] = useState();
-  const [city, setcity] = useState();
-  const [gender, setgender] = useState();
-  const [phn, setphn] = useState();
+import { toast } from "react-hot-toast";
+import { useNavigate, Link } from "react-router-dom";
 
-  const [Regiserdata, setRegisterdata] = useState({
+const Register = () => {
+  const navigate = useNavigate();
+
+  const [registerData, setRegisterData] = useState({
     fname: "",
     email: "",
     password: "",
     phn: "",
   });
 
-  const handelchange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setRegisterdata((previousdata) => ({ ...previousdata, [name]: value }));
+    setRegisterData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const { fname, email, password, phn } = registerData;
+
+    if (!fname || !email || !password || !phn) {
+      toast.error("Please fill in all fields");
+      return false;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    if (phn.length < 10) {
+      toast.error("Please enter a valid phone number");
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(Regiserdata);
-     
+    if (!validateForm()) return;
+
     try {
-      const res=await api.post("/auth/",Regiserdata);
-      toast.success(res.data.message);
-      setRegisterdata({
-      fname: "",
-      password: "",
-      city: "",
-      phn: "",
-    });
-      
+      const res = await api.post("/auth/register", registerData);
+
+      toast.success(res.data.message || "Registration successful!");
+
+      setRegisterData({
+        fname: "",
+        email: "",
+        password: "",
+        phn: "",
+      });
+
+      setTimeout(() => navigate("/login"), 1200);
     } catch (error) {
-      toast.error(  `Error : ${error.response?.status || error.message} | ${
-          error.response?.data.message || ""
-        }`)
+      toast.error(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
+      console.error(error);
     }
-
-
-    
   };
-//    const handleGenderChange = (selectedGender) => {
-//     setRegisterdata((prevData) => ({...prevData,
-//     gender: selectedGender,
-//   }));
-// };
-
-
-
 
   return (
-    <>
-      <div className="w-full h-screen -mt-30 bg-amber-300 relative">
-        <div>
-          <img className="w-700 h-194 blur" src={image} alt="" />
-          <div className="w-100 h-150 bg-red-300 -mt-160 ml-140  rounded-2xl absolute">
-            <form action="" onSubmit={handleSubmit}>
-              <div className=" text-4xl text-amber-50 mt-5 ml-23">
-                {" "}
-                <u>Register Now </u>
-              </div>
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden flex items-center justify-center">
+      
+      {/* Background Image */}
+      <img
+        src={image}
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover blur-[2px] scale-105"
+      />
 
-              <label
-                className=" text-2xl ml-10 mt-5 absolute text-amber-50"
-                htmlFor=""
-              >
-                First name
-              </label>
-              <input
-                type=" text"
-                name="fname"
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-15"
-                id="1"
-                placeholder="Enter Your Full name"
-                value={Regiserdata.fname}
-                onChange={handelchange}
-              />
-              <label className=" text-2xl ml-10 mt-10 text-amber-50" htmlFor="">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                id="2"
-                placeholder="Enter your email"
-                value={Regiserdata.email}
-                onChange={handelchange}
-              />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/40" />
 
-              <div className=" ">
-                <label
-                  className=" text-2xl ml-10 mt-10 text-amber-50"
-                  htmlFor=""
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  className="bg-amber-50 w-80 p-3 rounded-sm ml-10 mt-5"
-                  id="3"
-                  placeholder="******"
-                  value={Regiserdata.password}
-                  onChange={handelchange}
-                />
-              </div>
-
-              
-              <div className=" mt-5 ml-10">
-                <label className=" text-xl text-amber-50" htmlFor="address">
-                  Phone
-                </label>
-                <br />
-                <input
-                type="tel"
-                  name="phn"
-                  value={Regiserdata.phn}
-                  onChange={handelchange}
-                  className="bg-amber-50 text-gray-600 w-80 p-3 rounded-sm mt-2 "
-                  id="4"
-                  placeholder="+91-12345678"
-                />
-              </div>
-              {/* <div className=" text-amber-50 text-xl ml-10 mt-5 ">
-                <label
-                  htmlFor="Gender "
-                  name="Gender"
-                  value={Regiserdata.gender}
-                  onChange={handelchange}
-                >
-                  Gender :{" "}
-                </label>
-                <label name="gender" htmlFor="Gender">Male</label>
-                <input type="radio" name="gender" value="Male" 
-                 onChange={(e) => handleGenderChange(e.target.value)} />
-                <label className="ml-8" htmlFor="Gender" name="gender">
-                  Female
-                </label>
-                <input type="radio" name="gender" value="FeMale"  
-                 onChange={(e) => handleGenderChange(e.target.value)}/>
-              </div> */}
-
-
-              <button
-                className=" bg-amber-50 w-34 h-14 rounded-sm ml-34 text-gray-500 mt-5 hover:bg-amber-200 hover:text-black"
-                type="submit"
-              >
-                Submit
-              </button>
-              <div className=" text-amber-50 text-md mt-3 ml-22">
-                <span>Already have an account? </span>
-                <a className=" hover:text-blue-700" href="/Btn1">
-                  Login{" "}
-                </a>
-              </div>
-            </form>
-          </div>
+      {/* Register Card */}
+      <div className="relative z-10 w-full max-w-sm bg-white/10 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/20 animate-fade-in-up">
+        
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-white mb-2 tracking-wide">
+            Register
+          </h2>
+          <p className="text-gray-200 text-sm">
+            Create your account
+          </p>
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          
+          {/* Full Name */}
+          <div>
+            <label className="block text-gray-200 text-sm font-medium mb-1 pl-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="fname"
+              value={registerData.fname}
+              onChange={handleChange}
+              placeholder="John Doe"
+              required
+              className="w-full bg-white/20 border border-white/10 text-white placeholder-gray-300 text-sm rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent p-2.5 outline-none transition"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-gray-200 text-sm font-medium mb-1 pl-1">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={registerData.email}
+              onChange={handleChange}
+              placeholder="name@company.com"
+              required
+              className="w-full bg-white/20 border border-white/10 text-white placeholder-gray-300 text-sm rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent p-2.5 outline-none transition"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-gray-200 text-sm font-medium mb-1 pl-1">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={registerData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              className="w-full bg-white/20 border border-white/10 text-white placeholder-gray-300 text-sm rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent p-2.5 outline-none transition"
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block text-gray-200 text-sm font-medium mb-1 pl-1">
+              Phone
+            </label>
+            <input
+              type="tel"
+              name="phn"
+              value={registerData.phn}
+              onChange={handleChange}
+              placeholder="+91 1234567890"
+              required
+              className="w-full bg-white/20 border border-white/10 text-white placeholder-gray-300 text-sm rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent p-2.5 outline-none transition"
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg text-sm px-5 py-3 shadow-lg transform transition hover:scale-[1.02] active:scale-95 focus:ring-4 focus:ring-amber-300"
+          >
+            Sign Up
+          </button>
+        </form>
+
+        {/* Login Link */}
+        <div className="text-gray-200 text-sm text-center mt-6">
+          <span>Already have an account? </span>
+          <Link
+            to="/login"
+            className="font-semibold text-amber-400 hover:text-amber-300 underline transition"
+          >
+            Login
+          </Link>
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 

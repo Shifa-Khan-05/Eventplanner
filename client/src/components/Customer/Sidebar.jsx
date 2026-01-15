@@ -10,8 +10,13 @@ import {
 import { FiLogOut } from "react-icons/fi";
 import api from "../../config/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 const Sidebar = ({ active, setactive }) => {
+  const navigate = useNavigate();
+  const { setUser, setIsLogin, setIsAdmin } = useAuth();
+
   const menuItems = [
     { key: "overview", label: "Overview", icon: <FaRegChartBar /> },
     { key: "Booking", label: "Booking", icon: <FaBookOpen /> },
@@ -19,6 +24,27 @@ const Sidebar = ({ active, setactive }) => {
     { key: "Support", label: "Support", icon: <FaLifeRing /> },
     { key: "Feedback", label: "Feedback", icon: <FaCommentDots /> },
   ];
+
+  const handleLogout = async () => {
+    try {
+      // optional: call backend logout if exists
+      await api.post("/auth/logout").catch(() => {
+        // ignore if logout endpoint is missing or returns error; still proceed to clear locally
+      });
+
+      // clear client state
+      setUser(null);
+      setIsLogin(false);
+      setIsAdmin(false);
+      sessionStorage.removeItem("EventUser");
+
+      toast.success("Logged out successfully");
+      navigate("/login", { replace: true });
+    } catch (err) {
+      toast.error("Failed to logout. Try again."); 
+      // still attempt local cleanup if needed
+    }
+  };
 
   return (
     <div className="w-72 min-h-screen border p-5 shadow-md flex flex-col justify-between">
@@ -54,7 +80,7 @@ const Sidebar = ({ active, setactive }) => {
       <div>
         <button
           className="w-full flex items-center justify-center gap-3 text-lg text-red-700 hover:bg-red-600 hover:text-white border border-red-400 px-4 py-3 rounded-lg transition font-bold"
-          onClick={() => alert("Logout Clicked")}
+          onClick={handleLogout}
         >
           <FiLogOut />
           Logout
